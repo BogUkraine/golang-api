@@ -27,7 +27,17 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	connectionString := os.Getenv("DB_CONNECTION_STRING")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	if dbHost == "" || dbPort == "" || dbUser == "" || dbPassword == "" || dbName == "" {
+		log.Fatal("One or more required environment variables are not set")
+	}
+	connectionString := "host=" + dbHost + " port=" + dbPort + " user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " sslmode=disable"
+
 	if connectionString == "" {
 		log.Fatal("DB_CONNECTION_STRING environment variable is not set")
 	}
