@@ -7,7 +7,7 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type Donation struct {
+type Donation struct { // to trim
 	ID              string `json:"id"`
 	Time            int64  `json:"time"`
 	Description     string `json:"description"`

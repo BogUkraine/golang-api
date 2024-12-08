@@ -49,7 +49,7 @@ func (userController *UserController) GetUserHandler(w http.ResponseWriter, r *h
 	}
 }
 
-const TIME_FORMAT = "2006-01-02"
+const timeFormat = "2006-01-02"
 
 func (userController *UserController) GetUserDonationsHandler(w http.ResponseWriter, r *http.Request) {
 	date := r.URL.Query().Get("date")
@@ -58,7 +58,7 @@ func (userController *UserController) GetUserDonationsHandler(w http.ResponseWri
 		return
 	}
 
-	parsedDate, err := time.Parse(TIME_FORMAT, date)
+	parsedDate, err := time.Parse(timeFormat, date)
 	if err != nil {
 		http.Error(w, "Invalid date format", http.StatusBadRequest)
 		return

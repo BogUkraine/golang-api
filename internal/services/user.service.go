@@ -19,10 +19,6 @@ type UserService struct {
 	UserStorage UserStorage
 }
 
-// func NewUserService(userStorage UserStorage) *UserService {
-// 	return &UserService{userStorage}
-// }
-
 func (userService *UserService) CreateUser(user *models.User) error {
 	return userService.UserStorage.CreateUser(user)
 }
@@ -42,12 +38,13 @@ func (userService *UserService) GetUserDonations(date time.Time) ([]models.Donat
 		return nil, fmt.Errorf("MONO_* secret is not set")
 	}
 
+	// url.URL
 	url := fmt.Sprintf("https://api.monobank.ua/personal/statement/%v/%v/%v", accountId, date.Unix(), date.Add(24*time.Hour).Unix())
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("X-Token", token)
 
-	client := http.Client{}
+	client := http.DefaultClient
 	resp, err := client.Do(req)
 
 	if err != nil {
