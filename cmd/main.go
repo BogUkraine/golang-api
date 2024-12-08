@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"main/db"
+	controllers "main/internal/controllers"
+	services "main/internal/services"
+	"main/internal/storage"
 	"net/http"
 
 	"github.com/joho/godotenv"
@@ -25,9 +27,18 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	db.Init()
+	storageInstance, err := storage.NewStorageInstance()
+	if err != nil {
+		log.Fatalf("Failed to initialize storage: %v", err)
+	}
 
-	http.HandleFunc("/hello", helloHandler)
+	var (
+		userService    = services.NewUserService(storageInstance)
+		userController = controllers.NewUserController(userService)
+	)
+
+	http.HandleFunc("GET /hello", helloHandler)
+	http.HandleFunc("GET /users/{id}", userController.GetUserHandler)
 
 	log.Println("Starting server on :8080")
 	err = http.ListenAndServe(":8080", nil)
