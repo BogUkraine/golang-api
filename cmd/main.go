@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"log"
-	controllers "main/internal/controllers"
-	services "main/internal/services"
+	"main/internal/controllers"
+	"main/internal/services"
 	"main/internal/storage"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/joho/godotenv"
 )
@@ -32,16 +34,16 @@ func main() {
 		log.Fatalf("Failed to initialize storage: %v", err)
 	}
 
-	var (
-		userService    = services.NewUserService(storageInstance)
-		userController = controllers.NewUserController(userService)
-	)
+	userService := services.UserService{UserStorage: storageInstance}
+	userController := controllers.UserController{UserService: &userService}
 
-	http.HandleFunc("GET /hello", helloHandler)
-	http.HandleFunc("GET /users/{id}", userController.GetUserHandler)
+	router := mux.NewRouter()
+	router.HandleFunc("/hello", helloHandler).Methods("GET")
+	// router.HandleFunc("/users", userController.GetUserHandler).Methods("GET")
+	router.HandleFunc("/users/me/donations", userController.GetUserDonationsHandler).Methods("GET")
 
 	log.Println("Starting server on :8080")
-	err = http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":8080", router)
 	if err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
